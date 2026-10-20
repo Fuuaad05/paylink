@@ -1,6 +1,6 @@
 import {createPublicClient,defineChain,http,formatUnits} from 'viem';
 import {TOKEN,RPC,CHAIN,units} from './direct-payment';
-import type {Provider} from './browser';
+import type {Provider} from './wallet';
 export const mezoChain=defineChain({id:CHAIN,name:'Mezo Testnet',nativeCurrency:{name:'Bitcoin',symbol:'BTC',decimals:18},rpcUrls:{default:{http:[RPC]}},blockExplorers:{default:{name:'Mezo Explorer',url:'https://explorer.test.mezo.org'}}});
 export const musdAbi=[{type:'function',name:'balanceOf',stateMutability:'view',inputs:[{name:'account',type:'address'}],outputs:[{type:'uint256'}]}] as const;
 export async function musdBalance(account:string){return createPublicClient({chain:mezoChain,transport:http(RPC,{timeout:10000,retryCount:1})}).readContract({address:TOKEN,abi:musdAbi,functionName:'balanceOf',args:[account as `0x${string}`]});}

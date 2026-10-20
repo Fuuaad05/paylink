@@ -34,3 +34,11 @@ Added an authenticated seller sales endpoint and Sales tab with exact MUSD total
 ## October 19 storefront and checkout update
 
 Added copyable HTML checkout buttons with preview; optional public covers; file size/type from private storage metadata; an owner-only presentation editor for existing products; wallet network and balance guidance; insufficient-balance preflight before signing; confirmation polling limited to 24 checks at five-second intervals for saved settling orders with a transaction hash. Manual recovery remains available. Automated tests pass; updated hosted upload/payment behavior needs builder acceptance. No external adoption or production safety is claimed.
+
+## October 20 wallet balance card
+
+Added a read-only MUSD holdings card on authenticated dashboard tabs. It uses the verified session wallet address, exact token formatting, manual refresh and a checked timestamp. Failure is shown as unavailable rather than zero, and wallet holdings are explicitly separate from sales revenue. No new payment flow or SQL is introduced. Live display remains to be checked by the builder.
+
+## October 20 wallet selection and WalletConnect
+
+Added explicit EIP-6963 installed-wallet selection, WalletConnect QR pairing using the Ethereum Provider, selected-provider persistence/reload, account matching before signing payments, disconnect/account-change sign-out, and account-isolated loading. Supabase remains the authenticated identity source. Automated wallet selection/account tests pass; mobile pairing, custom-testnet support, signatures and real settlement still need builder acceptance.

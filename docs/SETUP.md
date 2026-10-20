@@ -41,11 +41,11 @@ Open http://localhost:3000. The app shows setup guidance if public settings are 
 
 Run both SQL migrations in filename order for a fresh project. Existing projects must run only the new `202610190002_product_details.sql` migration, once. It adds optional metadata columns and a public covers bucket; purchased files remain private.
 
-## 3. Test with Rabby
+## 3. Test wallet connections
 
-Use the desktop Rabby extension for the first test. If multiple extensions are installed, the app prefers Rabby through EIP-6963 discovery. Sign-in is a message, not a payment.
+Choose an installed Ethereum wallet explicitly through Connect wallet, or select WalletConnect for QR pairing. Configure NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID from .env.example and allow your local/deployed website origins in Reown Dashboard. Sign-in is a message, not a payment. See docs/WALLETCONNECT-UPDATE.md for setup and mobile testnet limitations.
 
-Use two Rabby accounts: Seller and Buyer. On the Buyer account, hold test MUSD on Mezo Testnet (chain ID 31611). Official testnet MUSD: `0x118917a40FAF1CD7a13dB0Ef56C86De7973Ac503`, 18 decimals. Test BTC / MEZO alone is not test MUSD. Obtain test BTC at https://faucet.test.mezo.org/ and follow Mezo's instructions at https://testnet.mezo.org to obtain MUSD.
+Use two regular Ethereum accounts: Seller and Buyer. On the Buyer account, hold test MUSD on Mezo Testnet (chain ID 31611). Official testnet MUSD: `0x118917a40FAF1CD7a13dB0Ef56C86De7973Ac503`, 18 decimals. Test BTC / MEZO alone is not test MUSD. Obtain test BTC at https://faucet.test.mezo.org/ and follow Mezo's instructions at https://testnet.mezo.org to obtain MUSD.
 
 The x402 flow is designed for facilitator-sponsored settlement gas. Borrowing or swapping to acquire MUSD is separate and may require test BTC. Verify the current facilitator supports the Mezo testnet before signing.
 

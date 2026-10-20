@@ -21,7 +21,7 @@ export default function SalesPanel({signedIn,onSignIn}:{signedIn:boolean;onSignI
     return()=>{active=false;};
   },[signedIn,page,refresh]);
 
-  if(!signedIn)return <section className="empty"><Wallet size={29}/><h3>Sign in with your seller wallet.</h3><p>Your sales appear here after a buyer completes a payment.</p><button className="button secondary" onClick={onSignIn}>Sign in with Rabby</button></section>;
+  if(!signedIn)return <section className="empty"><Wallet size={29}/><h3>Sign in with your seller wallet.</h3><p>Your sales appear here after a buyer completes a payment.</p><button className="button secondary" onClick={onSignIn}>Connect wallet</button></section>;
 
   return <section aria-label="Seller sales">
     <div className="sales-summary" aria-busy={loading}>
