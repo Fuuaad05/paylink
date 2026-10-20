@@ -1,0 +1,1 @@
+export async function GET(){return Response.json({app:'PayLink',network:'Mezo Testnet',chainId:31611,configured:!!(process.env.NEXT_PUBLIC_SUPABASE_URL&&process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY&&process.env.SUPABASE_SERVICE_ROLE_KEY)});}

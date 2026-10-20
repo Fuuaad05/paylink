@@ -1,0 +1,2 @@
+export type Product={id:string;title:string;description:string;price:string;recipient:string;created_at:string;cover_url?:string|null;file_type?:string|null;file_size?:number|null};
+export type Order={id:string;product_id:string;buyer_id:string;recipient:string;amount:string;status:'pending'|'settling'|'paid';tx_hash:string|null;payer:string|null;created_at:string;paid_at:string|null;product?:{title:string}};

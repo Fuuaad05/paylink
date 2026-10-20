@@ -1,0 +1,17 @@
+import {z} from 'zod';
+import {admin,user,body,fail,HttpError,sameOrigin,walletOf} from '../../../lib/server';
+import {units} from '../../../lib/direct-payment';
+import {ownPath,storageDetails} from '../../../lib/product-details';
+const schema=z.object({title:z.string().trim().min(1).max(100),description:z.string().trim().max(500),price:z.string(),storagePath:z.string().max(250),coverPath:z.string().max(250).optional()});
+const columns='id,title,description,price,recipient,created_at,cover_path,file_type,file_size';
+function present(db:ReturnType<typeof admin>,row:any){const {cover_path,...product}=row;return {...product,cover_url:cover_path?db.storage.from('covers').getPublicUrl(cover_path).data.publicUrl:null};}
+async function details(db:ReturnType<typeof admin>,path:string,uid:string,cover=false){
+ if(!ownPath(path,uid))throw new HttpError(400,'Upload files into your own storage folder.');
+ const {data,error}=await db.storage.from(cover?'covers':'products').info(path);
+ if(error||!data)throw new HttpError(400,'Upload the '+(cover?'cover':'product file')+' before saving.');
+ try{return storageDetails(data,cover)}catch(e){throw new HttpError(400,(e as Error).message)}
+}
+export async function GET(request:Request){try{const db=admin(),id=new URL(request.url).searchParams.get('id');if(id){z.string().uuid().parse(id);const {data,error}=await db.from('products').select(columns).eq('id',id).single();if(error)throw new HttpError(404,'Product not found.');return Response.json({product:present(db,data)},{headers:{'Cache-Control':'no-store'}});}const u=await user(request);const {data,error}=await db.from('products').select(columns).eq('seller_id',u.id).order('created_at',{ascending:false});if(error)throw error;return Response.json({products:data.map(p=>present(db,p))},{headers:{'Cache-Control':'private, no-store'}});}catch(e){return fail(e)}}
+export async function POST(request:Request){try{sameOrigin(request);const u=await user(request),input=schema.parse(await body(request));units(input.price);const db=admin(),file=await details(db,input.storagePath,u.id);if(input.coverPath)await details(db,input.coverPath,u.id,true);const {data,error}=await db.from('products').insert({seller_id:u.id,title:input.title,description:input.description,price:input.price,recipient:walletOf(u),storage_path:input.storagePath,file_type:file.type,file_size:file.size,cover_path:input.coverPath||null}).select(columns).single();if(error)throw error;return Response.json({product:present(db,data)},{status:201});}catch(e){return fail(e)}}
+// Existing orders retain their original price; this route only refreshes presentation metadata.
+export async function PATCH(request:Request){try{sameOrigin(request);const u=await user(request),input=z.object({productId:z.string().uuid(),coverPath:z.string().max(250).optional()}).parse(await body(request));const db=admin();const {data:product}=await db.from('products').select('storage_path').eq('id',input.productId).eq('seller_id',u.id).single();if(!product)throw new HttpError(404,'Product not found.');const file=await details(db,product.storage_path,u.id);if(input.coverPath)await details(db,input.coverPath,u.id,true);const {data,error}=await db.from('products').update({file_type:file.type,file_size:file.size,...(input.coverPath?{cover_path:input.coverPath}:{})}).eq('id',input.productId).eq('seller_id',u.id).select(columns).single();if(error)throw error;return Response.json({product:present(db,data)});}catch(e){return fail(e)}}

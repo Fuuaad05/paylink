@@ -1,0 +1,9 @@
+'use client';
+import {useEffect,useState} from 'react';
+import type {Product} from '../../lib/types';
+import {fileLabel} from '../../lib/product-details';
+export default function Storefront(){
+ const [product,setProduct]=useState<Product|null>(null),[error,setError]=useState(''),[loading,setLoading]=useState(true);
+ useEffect(()=>{const abort=new AbortController();const id=new URLSearchParams(location.search).get('product');if(!id){setError('Open this example from a product’s Add to website panel.');setLoading(false);return}fetch('/api/products?id='+encodeURIComponent(id),{signal:abort.signal}).then(async r=>{const data=await r.json();if(!r.ok)throw Error(data.error||'Product unavailable.');return data.product}).then(setProduct).catch(e=>{if(!abort.signal.aborted)setError(e.message)}).finally(()=>{if(!abort.signal.aborted)setLoading(false)});return()=>abort.abort()},[]);
+ return <main className="sample-store"><div className="eyebrow">EXAMPLE MERCHANT WEBSITE · TESTNET</div><h1>Your work deserves<br/>a simple checkout.</h1><p>This sample storefront demonstrates a PayLink buy button on a separate page. You can place the same button on your own website.</p>{loading?<p role="status">Loading product…</p>:error?<p role="alert">{error}</p>:product?<article>{product.cover_url&&<img src={product.cover_url} alt={product.title+' cover'}/>}<div><span className="eyebrow">{fileLabel(product.file_type,product.file_size)}</span><h2>{product.title}</h2><p>{product.description}</p><strong>{product.price} MUSD</strong><a className="button primary" href={'/?product='+encodeURIComponent(product.id)} target="_blank" rel="noopener noreferrer">Buy with MUSD ↗</a></div></article>:null}<p className="fine">Checkout, wallet sign-in and private delivery happen on PayLink. This page is an integration demonstration, not an independent merchant adoption claim.</p><a className="text-button" href="/">Return to PayLink</a></main>;
+}
