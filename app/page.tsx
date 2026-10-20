@@ -57,7 +57,18 @@ export default function Page(){
  checkFunds(await musdBalance(account),product.price);
  const wallet=createWalletClient({account,chain,transport:custom(p)});const publicClient=createPublicClient({chain,transport:http()});
  const signer={address:account as `0x${string}`,signTypedData:(args:any)=>wallet.signTypedData({...args,account}),readContract:(args:any)=>publicClient.readContract(args)};
- const client=new x402Client().register('eip155:31611',new ExactEvmScheme(signer));const httpClient=new x402HTTPClient(client);
+ const client = x402Client.fromConfig({
+  schemes: [
+    {
+      network: 'eip155:31611',
+      client: new ExactEvmScheme(signer),
+    },
+  ],
+  spendControls: {
+    maxAmountPerPayment: '$' + product.price,
+  },
+});
+const httpClient=new x402HTTPClient(client);
  const quote=httpClient.getPaymentRequiredResponse(name=>quoteResponse.headers.get(name),await quoteResponse.json());
  setBusy('Approve MUSD payment in your wallet');const payload=await httpClient.createPaymentPayload(quote);setBusy('Submitting payment');
  const headers=httpClient.encodePaymentSignatureHeader(payload);
