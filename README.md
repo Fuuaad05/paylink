@@ -43,13 +43,17 @@ npm run build
 - Reconciliation of interrupted settlements using the existing transaction hash.
 - Database migration, API documentation and manual acceptance checklist.
 
-## Current status
+## Live project and status
 
-The builder reports successful local Supabase wallet authentication, product publication, a funded two-wallet test MUSD payment, private download, repeat download and seller sales display. These user-run checks are separate from automated verification in the development environment.
+Try the Mezo Testnet deployment: https://paylink-omega-three.vercel.app/
 
-The October 19 storefront update adds website-button generation, optional public covers, server-derived file details, balance/network guidance and bounded confirmation checks. Run the new product-details migration before using this update. Its hosted Supabase migration and updated wallet flow still need the builder's acceptance check. Vercel deployment and the public submission materials remain outstanding.
+The builder reports successful deployed Supabase wallet sign-in, product retrieval and a test MUSD payment that unlocked download access. Earlier local tests covered initial and repeat download, seller Sales and the wallet balance card. The public deployment is a testnet prototype, not a production service.
 
-The older October 12 prototype used Cloudflare/D1 and direct ERC-20 transfers. This October 18 implementation targets standard Next.js/Vercel/Supabase and adds product delivery, wallet authentication, x402 and recovery. Original preparation dates remain disclosed.
+The implementation includes product covers and file metadata, merchant HTML buttons, saved purchase recovery, dashboard balances and installed-wallet/WalletConnect selection. Real mobile pairing, the complete deployed recovery flow and cross-account failure paths still need explicit acceptance evidence before being claimed as verified.
+
+Automated validation for the wallet update included 42 tests, a TypeScript check and a production build. These fixture checks do not prove every hosted policy or real wallet flow.
+
+The older October 12 prototype used Cloudflare/D1 and direct ERC-20 invoice transfers. October 18–20 Wave 1 work introduced the current Next.js/Vercel/Supabase product-delivery application and its integrations. Original preparation dates remain disclosed.
 
 ## Recovery guarantee and limits
 
@@ -78,6 +82,6 @@ React, Next.js, Supabase, viem, x402 SDKs, WalletConnect Ethereum Provider, QRCo
 
 Set `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID` using `.env.example` and configure localhost and the final Vercel origin in your Reown project. Installed wallets can be selected without WalletConnect; QR pairing requires the project ID and a wallet supporting Mezo Testnet. See [docs/WALLETCONNECT-UPDATE.md](docs/WALLETCONNECT-UPDATE.md).
 
-The builder has reported successful local Rabby sign-in, product publication, test MUSD purchase, repeat download, seller sales and dashboard balance. The new wallet picker and WalletConnect path still require real browser pairing/sign-in/payment checks. Public deployment and submission materials remain outstanding.
+The builder has reported successful local Rabby sign-in, product publication, test MUSD purchase, repeat download, seller sales and dashboard balance. The new wallet picker and WalletConnect path still require real browser pairing/sign-in/payment checks. The public deployment is available at the URL above. Submission materials and independent user acceptance remain to be completed.
 
 Automated validation for this update: TypeScript check, 42 tests and production build pass. These do not substitute for testing real mobile wallet pairing and settlement.
