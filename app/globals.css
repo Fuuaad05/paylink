@@ -25,3 +25,16 @@
 .plan-status .button{margin:12px 0}
 .plan-status code{display:inline-block;max-width:100%;vertical-align:middle}
 @media(max-width:700px){.sales-receipt-actions{flex-direction:column;align-items:flex-start;gap:6px;min-width:125px}.sales-receipt-actions>a,.sales-receipt-actions>.text-button{min-height:44px}.plan-status>div>a{display:flex;margin:8px 0}.plan-status .button{white-space:normal;text-align:center}}
+
+/* Checkout funding is visible without opening an accordion or leaving PayLink. */
+.readiness .funding-panel{margin-top:20px;padding:20px;border:1px solid #edc6cb;border-radius:9px;background:#fff}
+.funding-heading{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px}
+.readiness .funding-step{display:grid;place-items:center;flex-shrink:0;width:30px;height:30px;border-radius:50%;background:var(--accent);color:white;font-size:13px;font-weight:600}
+.funding-heading h3{font-size:18px;margin:2px 0 6px;line-height:1.35}
+.readiness .funding-heading p{margin:0;color:#666}
+.readiness .funding-instructions{color:#61665f;margin:12px 0 16px}
+.readiness .funding-optional{padding:10px 12px;border-radius:6px;background:#f3f4ed;color:#616b57}
+.funding-actions>.button{min-height:44px;white-space:normal;text-align:center}
+.funding-actions>.button:first-child{border-color:#e4adb5;color:#ac3342}
+.readiness .funding-footnote{margin-top:16px;line-height:1.8}
+@media(max-width:700px){.readiness .funding-panel{padding:16px}.funding-actions>.button{width:100%}.funding-heading h3{font-size:17px}}

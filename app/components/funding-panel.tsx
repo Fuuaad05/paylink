@@ -3,13 +3,13 @@ import {useEffect,useRef,useState} from 'react';
 import {createPublicClient,custom,formatUnits} from 'viem';
 import {activeWallet,assertWalletAccount} from '../../lib/wallet';
 import {mezoChain,ensureMezo} from '../../lib/checkout';
-import {quoteFunding,executeFunding,POOLS,type FundingQuote} from '../../lib/mezo-pools';
+import {quoteFunding,executeFunding,type FundingQuote} from '../../lib/mezo-pools';
 import {units,EXPLORER} from '../../lib/direct-payment';
 type SavedSwap={hash:`0x${string}`;pending:boolean};
 export default function FundingPanel({address,price,balance,onFunded,onBusy,disabled=false}:{address:string;price:string;balance:bigint|null;onFunded:()=>void;onBusy?:(label:string)=>void;disabled?:boolean}){
- const [open,setOpen]=useState(false),[input,setInput]=useState('0.0001'),[bps,setBps]=useState(50),[quote,setQuote]=useState<FundingQuote|null>(null),[busy,setBusy]=useState(''),[error,setError]=useState(''),[message,setMessage]=useState(''),[swap,setSwap]=useState<SavedSwap|null>(null);
+ const [input,setInput]=useState('0.0001'),[bps,setBps]=useState(50),[quote,setQuote]=useState<FundingQuote|null>(null),[busy,setBusy]=useState(''),[error,setError]=useState(''),[message,setMessage]=useState(''),[swap,setSwap]=useState<SavedSwap|null>(null);
  const generation=useRef(0);const key='paylink.swap:31611:'+address.toLowerCase();
- useEffect(()=>{setQuote(null);setSwap(null);setError('');try{const s=JSON.parse(localStorage.getItem(key)||'null');if(s&&/^0x[0-9a-fA-F]{64}$/.test(s.hash)){setSwap(s);if(s.pending)setOpen(true);}}catch{}return()=>{generation.current++;}},[key]);
+ useEffect(()=>{setQuote(null);setSwap(null);setError('');try{const s=JSON.parse(localStorage.getItem(key)||'null');if(s&&/^0x[0-9a-fA-F]{64}$/.test(s.hash)){setSwap(s);}}catch{}return()=>{generation.current++;}},[key]);
  function remember(s:SavedSwap){setSwap(s);try{localStorage.setItem(key,JSON.stringify(s))}catch{setMessage('Save the swap transaction hash below before closing this page.');}}
  async function run(label:string,fn:()=>Promise<void>){if(busy||disabled)return;setBusy(label);onBusy?.(label);setError('');setMessage('');try{await fn()}catch(e:any){setError(e.code===4001?'Request cancelled in your wallet.':e.shortMessage||e.message||'Swap unavailable.')}finally{setBusy('');onBusy?.('');}}
  async function getQuote(){const current=++generation.current;await run('Reading Mezo Pools',async()=>{const p=await activeWallet();await ensureMezo(p);const q=await quoteFunding(p,address,input,bps);if(current===generation.current)setQuote(q);});}
@@ -28,16 +28,15 @@ export default function FundingPanel({address,price,balance,onFunded,onBusy,disa
  const insufficient=balance!==null&&balance<units(price),shortfall=balance===null?0n:units(price)>balance?units(price)-balance:0n;
  const covered=quote&&BigInt(quote.minimumOut)>=shortfall;
  return <section className="funding-panel" aria-label="Get MUSD with Mezo Pools">
-  <button className="text-button" onClick={()=>setOpen(v=>!v)} aria-expanded={open} disabled={!!busy||disabled}>{open?'Close swap':'Get MUSD with test BTC'} <span aria-hidden="true">↔</span></button>
-  {!open&&insufficient&&<p>Swap into MUSD here, then continue checkout.</p>}
-  {open&&<><h3>Test BTC → MUSD</h3><p>Swap through Mezo Pools. This is a separate wallet transaction before purchasing your product. You will spend test BTC, including gas.</p>
+  <div className="funding-heading"><span className="funding-step">1</span><div><h3>{insufficient?'Need MUSD? Swap here.':'Get MUSD with test BTC'}</h3><p>Swap directly in this checkout through Mezo Pools.</p></div></div>
+  <p className="funding-instructions">Choose your test BTC amount, preview the MUSD you’ll receive, then confirm in your wallet. After the swap, use the product’s Pay button below.</p>
+  {!insufficient&&balance!==null&&<p className="funding-optional">You already have enough MUSD for this product. Swapping is optional.</p>}
    <label htmlFor="funding-btc">Test BTC to swap</label><input id="funding-btc" inputMode="decimal" value={input} disabled={!!busy||disabled||!!swap?.pending} onChange={e=>{generation.current++;setInput(e.target.value);setQuote(null)}}/>
    <label htmlFor="funding-slippage">Maximum slippage</label><select id="funding-slippage" value={bps} disabled={!!busy||disabled||!!swap?.pending} onChange={e=>{generation.current++;setBps(Number(e.target.value));setQuote(null)}}><option value={50}>0.5%</option><option value={100}>1%</option></select>
    {quote&&<div className="funding-quote"><div><span>Estimated MUSD</span><b>{formatUnits(BigInt(quote.expectedOut),18)}</b></div><div><span>Minimum MUSD received</span><b>{formatUnits(BigInt(quote.minimumOut),18)}</b></div><small>Quote valid for 30 seconds. Router and pool are checked against the Mezo Testnet deployment.</small>{!covered&&<p>Increase the swap amount: the minimum output does not cover this product’s MUSD shortfall.</p>}</div>}
-   {swap?.pending?<><p role="status">A swap was already submitted. Check its receipt before submitting another swap.</p><button className="button secondary" disabled={!!busy||disabled} onClick={checkSwap}>Check existing swap</button></>:<div className="funding-actions"><button className="button secondary" disabled={!!busy||disabled} onClick={getQuote}>Get quote</button>{quote&&<button className="button primary" disabled={!!busy||disabled||!covered} onClick={swapNow}>Approve &amp; swap test BTC</button>}</div>}
+   {swap?.pending?<><p role="status">A swap was already submitted. Check its receipt before submitting another swap.</p><button className="button secondary" disabled={!!busy||disabled} onClick={checkSwap}>Check existing swap</button></>:<div className="funding-actions"><button className="button secondary" disabled={!!busy||disabled} onClick={getQuote}>Preview BTC → MUSD swap</button>{quote&&<button className="button primary" disabled={!!busy||disabled||!covered} onClick={swapNow}>Confirm BTC → MUSD swap</button>}</div>}
    {busy&&<p role="status">{busy}…</p>}{error&&<p className="funding-error" role="alert">{error}</p>}{message&&<p role="status">{message}</p>}
    {swap&&<a className="receipt-link" href={EXPLORER+'/tx/'+swap.hash} target="_blank" rel="noreferrer">View swap receipt ↗ <code>{swap.hash}</code></a>}
-   <small>Funds are sent to your signed-in wallet, never to PayLink. Router: <a href={EXPLORER+'/address/'+POOLS.router} target="_blank" rel="noreferrer">{POOLS.router}</a>. Approvals are limited to your swap amount. If quoting fails, the swap stays unavailable.</small>
-  </>}
+   <small className="funding-footnote">Swapping spends test BTC plus network gas. MUSD goes to your wallet. This swap does not pay for the product; product payment is a separate step. Approvals are limited to your swap amount.</small>
  </section>;
 }
