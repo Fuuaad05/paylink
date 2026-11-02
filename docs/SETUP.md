@@ -82,3 +82,7 @@ No Render service is required. Do not add a separate Supabase Edge Function; thi
 ## 6. AKINDO
 
 Create your team using `PayLink` as a working name and list yourself as the human builder. Track 2: Access and Distribution. Disclose the October 12 preparation baseline and the features added during Wave 1. Submit only after the public deployment, repository, pitch deck and two-minute video are ready. Confirm the deadline timezone in AKINDO.
+
+## Wave 2 update
+
+For the existing deployment, follow [WAVE2-SETUP.md](WAVE2-SETUP.md). Apply the new October 31 migration before deploying the new code, set the public treasury wallet and YouTube link, then perform the wallet acceptance run. Keep all existing Supabase keys and project data.

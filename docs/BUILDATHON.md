@@ -42,3 +42,7 @@ Added a read-only MUSD holdings card on authenticated dashboard tabs. It uses th
 ## October 20 wallet selection and WalletConnect
 
 Added explicit EIP-6963 installed-wallet selection, WalletConnect QR pairing using the Ethereum Provider, selected-provider persistence/reload, account matching before signing payments, disconnect/account-change sign-out, and account-isolated loading. Supabase remains the authenticated identity source. Automated wallet selection/account tests pass; mobile pairing, custom-testnet support, signatures and real settlement still need builder acceptance.
+
+## October 31 update after Wave 1 feedback
+
+Implemented a source-verified Mezo Pools funding path, an MUSD-paid Creator tier, shared replay/receipt claims, database quota enforcement, plan reconciliation, the public evidence page, Sales evidence copying and a committed seven-page pitch PDF. Recorded the 20 MUSD transaction hash from the original explorer footage. New wallet flows and independent pilot are explicitly pending. Earlier outstanding bullets above are the historical development log; use README and docs/evidence.json for current status.

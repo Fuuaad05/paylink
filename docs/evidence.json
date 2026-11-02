@@ -1,0 +1,22 @@
+{
+  "network": "Mezo Testnet",
+  "chainId": 31611,
+  "token": "0x118917a40FAF1CD7a13dB0Ef56C86De7973Ac503",
+  "seller": "0x311b0fb3f0f317b06676a3a342f4e67084844cd8",
+  "receipts": [
+    {
+      "date": "2026-10-20",
+      "amount": "20",
+      "payer": "0x973e0761c3c7c932641484c7b549a99b24d9ff06",
+      "recipient": "0x311b0fb3f0f317b06676a3a342f4e67084844cd8",
+      "txHash": "0x8a1b262226588bcf2de8ca28587c5e1e9ec4f8896452d4a6d5d9bf224f20cb5e",
+      "status": "Wave 1 judges independently traced payment; hash transcribed from the original explorer recording.",
+      "kind": "product"
+    }
+  ],
+  "wave2LiveAcceptance": {
+    "swap": "pending",
+    "creatorPlan": "pending",
+    "independentPilot": "pending"
+  }
+}

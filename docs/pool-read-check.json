@@ -1,0 +1,21 @@
+{
+  "recordedDate": "2026-10-31",
+  "kind": "read-only pool check; no swap submitted",
+  "chainId": 31611,
+  "router": "0x9a1ff7FE3a0F69959A3fBa1F1e5ee18e1A9CD7E9",
+  "pool": "0xd16A5Df82120ED8D626a1a15232bFcE2366d6AA9",
+  "factory": "0x4947243CC818b627A5D06d14C4eCe7398A23Ce1A",
+  "reserves": [
+    "102527870101341180546779019",
+    "1303813601191821744075",
+    "1793362905"
+  ],
+  "quote": {
+    "amountIn": "100000000000000",
+    "expectedOut": "7860544713003182959",
+    "minimumOut": "7821241989438167044",
+    "slippageBps": 50,
+    "quotedAt": 1793452038207,
+    "blockNumber": "16485495"
+  }
+}

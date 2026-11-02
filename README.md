@@ -1,87 +1,74 @@
 # PayLink
 
-MUSD checkout with recoverable digital purchases, built by Fouad Abdulhakeem for the Mezo Buildathon.
+MUSD checkout for digital products, with private delivery and recoverable purchases. Built by Fouad Abdulhakeem for Mezo's Access & Distribution track.
 
-Sellers upload a digital file, set its price in MUSD and share a checkout link. Buyers authenticate with an Ethereum wallet, pay with MUSD on Mezo testnet, and receive short-lived access to a private file. Returning buyers sign in with the same wallet and recover an existing paid purchase.
+**[Live app](https://paylink-omega-three.vercel.app/)** · **[Evidence and receipts](https://paylink-omega-three.vercel.app/evidence)** · **[Pitch deck PDF](public/pitch-deck.pdf)** · **[Wave 2 setup](docs/WAVE2-SETUP.md)**
 
-## Stack
+The `/evidence` and PDF links become live when this update is deployed. Set `NEXT_PUBLIC_DEMO_VIDEO_URL` to expose the public/unlisted YouTube demo there.
 
-Next.js / TypeScript on Vercel, Supabase Postgres / Auth / private Storage, x402 exact payments, official Mezo testnet MUSD, viem, installed-wallet selection via EIP-6963, and WalletConnect Ethereum Provider with QR pairing.
+## What changed for Wave 2
 
-## Start here
+- **Get MUSD at checkout:** a BTC-to-MUSD swap through the official Mezo Testnet basic pool. Verifies the chain, router, factory, pool identity, reserves and quote before signing. Shows a minimum output and bounded slippage. BTC approval is exact; swap output goes to the buyer. The product purchase remains a separate, explicit payment.
+- **Creator plan:** free publishing up to 3 products; 3 MUSD for 30 days and up to 25 products. No automatic renewal or buyer surcharge. Existing products and downloads survive expiry. Payments go to a configured treasury and activate access once after verified settlement.
+- **Receipt evidence:** public `/evidence`, a committed PDF deck, the original 20 MUSD receipt, and Copy evidence in the Sales dashboard.
+- **Recovery hardening:** global authorization and transaction-hash claims prevent one payment being used across product and plan orders. Creator plan settlement can be reconciled without another charge.
 
-Follow **[docs/SETUP.md](docs/SETUP.md)**. No wallet private key is required for the app. Keep the Supabase service role key exclusively on the server.
+## Evidence judges can verify
+
+Mezo Testnet, chain **31611**. Official MUSD: `0x118917a40FAF1CD7a13dB0Ef56C86De7973Ac503` (18 decimals).
+
+| Field | Wave 1 20 MUSD purchase |
+|---|---|
+| Seller | `0x311b0fb3f0f317b06676a3a342f4e67084844cd8` |
+| Buyer / MUSD payer | `0x973e0761c3c7c932641484c7b549a99b24d9ff06` |
+| Date | October 20, 2026 |
+| Transaction | [`0x8a1b262226588bcf2de8ca28587c5e1e9ec4f8896452d4a6d5d9bf224f20cb5e`](https://explorer.test.mezo.org/tx/0x8a1b262226588bcf2de8ca28587c5e1e9ec4f8896452d4a6d5d9bf224f20cb5e) |
+
+The hash and full wallets were recovered from the original demo recording. Wave 1 judges independently traced the 20 MUSD and earlier 0.01 MUSD purchases. Only the 20 MUSD hash is currently included; no hash has been invented for the earlier purchase. The transaction sender is a facilitator; identify buyer and seller from MUSD **Transfer logs**.
+
+## Status and limits
+
+Wave 1 product payment and downloads were exercised by the builder and payment was independently traced by judges. The October 31 update implements funding and creator plans; **a real swap, plan payment and independent pilot remain pending**. The Node RPC check verified the router, factory, token pair, pool identity, nonzero reserves and a real quote at block 16485495 (0.0001 test BTC -> 7.860544713003182959 MUSD). See `docs/pool-read-check.json`. No completed swap or Creator plan payment is claimed.
+
+`docs/evidence.json` records this distinction. `npm run submission:check` intentionally reports missing video/acceptance evidence until the builder fills it with real results. Read [the live acceptance checklist](docs/WAVE2-ACCEPTANCE.md) and [pilot guide](docs/PILOT.md).
+
+## Install
+
+Use Node.js 22+.
 
 ```sh
 npm ci
-# Copy .env.example to .env.local and complete its settings.
+# Copy .env.example to .env.local and set your existing Supabase values.
 npm run dev
 ```
 
-Validation:
+For an **existing** deployment, apply `supabase/migrations/202610310001_creator_plan.sql` once in Supabase **before deploying**. Keep your keys, storage and existing tables. Set `PAYLINK_TREASURY_ADDRESS` to your public revenue wallet and `NEXT_PUBLIC_DEMO_VIDEO_URL` to your YouTube demo. No wallet private key is required. See [Wave 2 setup](docs/WAVE2-SETUP.md).
+
+For a fresh project, run all migrations in filename order and follow [the original setup guide](docs/SETUP.md).
+
+## Validation
 
 ```sh
 npm run typecheck
 npm test
+npm run test:database
 npm run build
+npm run verify:pools     # requires live access to the configured testnet RPC
+npm run submission:check # requires actual completed acceptance evidence and a demo URL
 ```
 
-## Included
+Database checks use PGlite/PostgreSQL to execute the migration and exercise publishing limits, expiry, receipt requirements and idempotent activation. They do not prove hosted Supabase policies or real-wallet settlement. Tests and builds are not a security audit.
 
-- Explicit installed-wallet picker and WalletConnect QR pairing; Supabase wallet sign-in.
-- Seller products with authenticated, immutable file uploads.
-- Read-only dashboard wallet balance on Mezo Testnet, with refresh and timestamp, separate from sales revenue.
-- Seller Sales dashboard with paid orders, exact MUSD revenue, buyer payment wallets, dates and transaction receipts.
-- Server-derived payout wallet from the seller's verified Web3 identity.
-- Shareable checkout, copyable HTML buy buttons with preview, and a standalone storefront integration example.
-- Optional public cover images and server-derived file type/size; private purchased files.
-- Mezo network guidance, exact MUSD balance checks before payment signing, and bounded confirmation polling.
-- x402 payment quotes, wallet signing and facilitator settlement on Mezo testnet.
-- Durable buyer orders, atomic settlement locks and unique payment authorizations / transaction hashes.
-- Token, payer, recipient, amount, confirmation and payment-signature validation.
-- Paid-order recovery and private 60-second download URLs.
-- Reconciliation of interrupted settlements using the existing transaction hash.
-- Database migration, API documentation and manual acceptance checklist.
+## Architecture
 
-## Live project and status
+Next.js / TypeScript on Vercel; Supabase Auth, Postgres and private Storage; x402 exact MUSD payments; viem; explicit installed-wallet selection and WalletConnect QR pairing. No Render backend is needed.
 
-Try the Mezo Testnet deployment: https://paylink-omega-three.vercel.app/
+Creators publish a private file and a public checkout page. Protected server routes derive the seller address from verified wallet identity. Each buyer reuses a unique product order. The server persists a settlement lock and authorization before calling the facilitator, then checks the token, MUSD payer, recipient, amount, signature and three confirmations. Paid orders can issue fresh 60-second download URLs without another charge.
 
-The builder reports successful deployed Supabase wallet sign-in, product retrieval and a test MUSD payment that unlocked download access. Earlier local tests covered initial and repeat download, seller Sales and the wallet balance card. The public deployment is a testnet prototype, not a production service.
+Payments and Postgres are not a globally atomic transaction. Interrupted settlements remain saved for reconciliation. Do not automatically reset a settling order or charge again. Short-lived URLs can be shared until expiry; downloaded files can be redistributed. There is no malware scanning. Use trusted files and test tokens only.
 
-The implementation includes product covers and file metadata, merchant HTML buttons, saved purchase recovery, dashboard balances and installed-wallet/WalletConnect selection. Real mobile pairing, the complete deployed recovery flow and cross-account failure paths still need explicit acceptance evidence before being claimed as verified.
+## Development record and attribution
 
-Automated validation for the wallet update included 42 tests, a TypeScript check and a production build. These fixture checks do not prove every hosted policy or real wallet flow.
+October 12 preparation used a Cloudflare/D1 invoice prototype. October 18-20 work introduced the current Next.js product-delivery architecture. The new funding, creator plan, evidence and deck update began October 31, 2026; dates are disclosed rather than presented as later work.
 
-The older October 12 prototype used Cloudflare/D1 and direct ERC-20 invoice transfers. October 18–20 Wave 1 work introduced the current Next.js/Vercel/Supabase product-delivery application and its integrations. Original preparation dates remain disclosed.
-
-## Recovery guarantee and limits
-
-A unique `(product_id, buyer_id)` row makes the same signed-in buyer reuse the same order. A database update from `pending` to `settling` elects one settlement attempt. The original authorization is saved before calling the facilitator. Once `paid`, the order can issue new download URLs without another charge.
-
-Payments cross a blockchain and a database; this is not a globally atomic transaction. A timeout after signing or settlement can leave an order in `settling`. The app blocks replacement payments and allows reconciliation of the original on-chain transaction. If a payment definitely failed, there is intentionally no automatic reset: resolve it after inspecting chain history to avoid a possible second charge. User-initiated retries do not promise permanent delivery availability or protection from a seller deleting a file outside the app.
-
-## Security boundaries
-
-- Mezo testnet only; do not use real money.
-- Supabase verifies the wallet sign-in. All protected routes call `auth.getUser` server-side.
-- The browser cannot directly read or edit payment tables. Service-role operations enforce user ownership.
-- Download URLs are bearer links and shareable until their 60-second expiration. The application cannot prevent a buyer redistributing downloaded files.
-- Files are limited to 10 MB. There is no malware scanning or content moderation; only distribute trusted files during the demo.
-- The signing key stays in the selected wallet. Payment authorizations are sensitive and never returned in the public product API.
-- RLS and live authorization behavior require testing in your Supabase project before exposing the app widely.
-- Configure Auth rate limits, exact redirect URLs and Vercel protections as appropriate before a public pilot.
-- Smart-contract wallets are not tested; use regular Ethereum accounts for initial acceptance.
-- A full merchant SDK, signed webhook delivery, and automated settlement discovery are future work. They are not implemented here.
-
-## Credits
-
-React, Next.js, Supabase, viem, x402 SDKs, WalletConnect Ethereum Provider, QRCode and Lucide icons retain their licenses. Network/token settings follow Mezo's developer documentation. AI assisted implementation. No competitor code is included.
-
-## Wallet connection setup
-
-Set `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID` using `.env.example` and configure localhost and the final Vercel origin in your Reown project. Installed wallets can be selected without WalletConnect; QR pairing requires the project ID and a wallet supporting Mezo Testnet. See [docs/WALLETCONNECT-UPDATE.md](docs/WALLETCONNECT-UPDATE.md).
-
-The builder has reported successful local Rabby sign-in, product publication, test MUSD purchase, repeat download, seller sales and dashboard balance. The new wallet picker and WalletConnect path still require real browser pairing/sign-in/payment checks. The public deployment is available at the URL above. Submission materials and independent user acceptance remain to be completed.
-
-Automated validation for this update: TypeScript check, 42 tests and production build pass. These do not substitute for testing real mobile wallet pairing and settlement.
+Network addresses and minimal pool ABIs follow [Mezo's documentation](https://mezo.org/docs/developers/features/mezo-pools/) and [mezo-org/tigris](https://github.com/mezo-org/tigris). See [integration notes](docs/MEZO-POOLS.md). React, Next.js, Supabase, viem, x402, WalletConnect, QRCode, Lucide and PGlite retain their licenses. AI assisted implementation. No competitor code is included.
