@@ -45,7 +45,7 @@ for x,l in zip(xs,labels):
  c.setFillColor(white);c.setStrokeColor(red);c.roundRect(x,235,195,66,9,fill=1,stroke=1);text(x+15,262,l,12,True)
  if x<700:text(x+201,260,'>',17,True,red)
 wrap(54,190,'The buyer reviews BTC input, expected MUSD and minimum output. The app verifies router, pool, token pair and reserves, then requests exact approval and a separate swap.',size=15,width=830)
-wrap(54,116,'READ CHECK PASSED: pool identity, liquidity and a real quote verified at block 16485495. A completed wallet swap is still pending.',size=12,color=red,width=830)
+wrap(54,116,'LIVE SWAP CONFIRMED: 0.005 test BTC returned 392.9315077 MUSD on November 3. Receipt linked on /evidence.',size=12,color=red,width=830)
 c.showPage()
 page('04 / TECHNICAL DESIGN','Verification before delivery. Recovery before retry.','Next.js + TypeScript on Vercel; Supabase Auth, Postgres and private Storage.')
 card(54,143,268,174,'Identity','Supabase verifies wallet sign-in. Protected server routes enforce ownership of products, orders and downloads.')
@@ -56,19 +56,23 @@ c.showPage()
 page('05 / BUSINESS MODEL','Free to start. A paid plan for growing creators.','A concrete sustainability model paid in MUSD; no buyer surcharge and no automatic renewal.')
 card(54,135,410,182,'FREE / 0 MUSD','Up to 3 products. Includes private files, checkout links, purchase recovery and seller receipts.')
 card(488,135,418,182,'CREATOR / 3 MUSD for 30 days','Up to 25 products. Payment goes to the configured PayLink treasury. Entitlement activates once after verified settlement.')
-wrap(54,91,'Existing products and buyer downloads remain accessible after expiry. Treasury configuration and live plan payment testing are required before claiming this flow verified.',size=12,color=red,width=830)
+wrap(54,91,'Existing products and buyer downloads remain accessible after expiry. Two 3 MUSD payments confirmed on chain; the builder verified activation and extension. Independent demand remains unproven.',size=12,color=red,width=830)
 c.showPage()
-page('06 / VERIFIABLE EVIDENCE','A payment judges can inspect themselves.','Wave 1 judges independently traced the product payments to the seller wallet.')
-y=302
-for label,value in [('Network','Mezo Testnet / 31611'),('MUSD contract',e['token']),('Seller wallet',e['seller']),('Buyer wallet',e['receipts'][0]['payer']),('Payment','20 MUSD / October 20, 2026')]:
- text(54,y,label,11,True,muted);text(220,y,value,12);y-=35
-text(54,113,'Transaction hash',11,True,muted);wrap(54,88,e['receipts'][0]['txHash'],width=850,size=11)
-c.linkURL('https://explorer.test.mezo.org/tx/'+e['receipts'][0]['txHash'],(54,67,906,105),relative=0)
+page('06 / VERIFIABLE EVIDENCE','Wave 2 transactions, confirmed on chain.','Builder-controlled test wallets. Every hash opens its explorer receipt; full wallets and roles are on /evidence.')
+y=300
+for r in e['wave2Receipts']:
+ amount=(r.get('inputAmount','')+' test BTC -> ' if r['kind']=='swap' else '')+r['amount']+' MUSD'
+ text(54,y,r['title']+' / '+r['date'],13,True,red)
+ text(54,y-20,amount,11)
+ text(54,y-39,r['txHash'],9,color=muted)
+ c.linkURL('https://explorer.test.mezo.org/tx/'+r['txHash'],(54,y-44,906,y+13),relative=0)
+ y-=62
+text(54,43,'Wave 1 history is retained on the public evidence page. No independent customer adoption is claimed.',10,color=muted)
 c.showPage()
 page('07 / NEXT STEPS AND LINKS','Prove the new flows with real users.','Keep a clear distinction between implemented code, automated checks and completed live acceptance.')
-wrap(54,300,'1. Complete a real testnet swap and Creator plan payment; publish both receipts.',size=17,width=830)
+wrap(54,300,'1. Completed: checkout swap, 400 MUSD product payment, Creator activation and extension.',size=17,width=830)
 wrap(54,247,'2. Run independent creator and buyer pilots; document friction, fixes and consented feedback.',size=17,width=830)
 wrap(54,194,'3. Update the demo and evidence manifest before the Wave 2 submission.',size=17,width=830)
 text(54,122,'Live evidence: /evidence   |   Source: github.com/Fuuaad05/paylink',13,True,red)
-wrap(54,86,'Prepared October 31, 2026. This development deck does not claim an independently tested swap, paid plan or production readiness.',width=830,size=11,color=muted)
+wrap(54,86,'Updated November 3, 2026. Confirmed testnet receipts and builder testing; independent pilots and production readiness remain outstanding.',width=830,size=11,color=muted)
 c.showPage();c.save();print(out)

@@ -15,8 +15,59 @@
     }
   ],
   "wave2LiveAcceptance": {
-    "swap": "pending",
-    "creatorPlan": "pending",
+    "swap": "confirmed_on_chain",
+    "creatorPlan": "payments_confirmed_builder_verified_activation_and_extension",
+    "purchaseRecovery": "builder_recorded_download_and_repeat_download",
     "independentPilot": "pending"
-  }
+  },
+  "wave2Receipts": [
+    {
+      "kind": "swap",
+      "title": "Checkout BTC → MUSD swap",
+      "date": "2026-11-03",
+      "amount": "392.93150772138529189",
+      "inputAmount": "0.005",
+      "inputAsset": "test BTC",
+      "payer": "0x311b0fb3f0f317b06676a3a342f4e67084844cd8",
+      "recipient": "0x311b0fb3f0f317b06676a3a342f4e67084844cd8",
+      "txHash": "0x9a10cee76f5561bd3c4b50198ca8cbc4af52d7fb9d6f62896c3cbb65e1d3ec56",
+      "blockNumber": 16544001,
+      "router": "0x9a1ff7FE3a0F69959A3fBa1F1e5ee18e1A9CD7E9",
+      "status": "Success. RPC receipt and BTC/MUSD transfer logs verified; the call targets PayLink’s configured Mezo Pools router. Recorded in the Wave 2 demo."
+    },
+    {
+      "kind": "product",
+      "title": "Digital product purchase",
+      "date": "2026-11-03",
+      "amount": "400",
+      "payer": "0x311b0fb3f0f317b06676a3a342f4e67084844cd8",
+      "recipient": "0x973e0761c3c7c932641484c7b549a99b24d9ff06",
+      "txHash": "0x00c80a97523507f05cf8ac8f4e6332971f92c2832737cd819b3598f2952ae57b",
+      "blockNumber": 16544026,
+      "status": "Success. RPC receipt and MUSD Transfer log verified: 400 MUSD from the buyer directly to the seller. Purchase and downloads recorded in the Wave 2 demo."
+    },
+    {
+      "kind": "creator_plan",
+      "title": "Creator plan payment",
+      "date": "2026-11-02",
+      "amount": "3",
+      "payer": "0x973e0761c3c7c932641484c7b549a99b24d9ff06",
+      "recipient": "0x311b0fb3f0f317b06676a3a342f4e67084844cd8",
+      "txHash": "0x7a91b264d738ee6eb639d8fb42a474b446dcadf6f00e661887543766e2ef2bc1",
+      "blockNumber": 16524360,
+      "status": "Success. RPC receipt and 3 MUSD transfer to the configured treasury wallet verified. Builder confirmed Creator access was activated."
+    },
+    {
+      "kind": "creator_plan",
+      "title": "Creator plan extension",
+      "date": "2026-11-02",
+      "amount": "3",
+      "payer": "0x973e0761c3c7c932641484c7b549a99b24d9ff06",
+      "recipient": "0x311b0fb3f0f317b06676a3a342f4e67084844cd8",
+      "txHash": "0x623a67317f6075ac5c01a50c2aaf6655bbe10487059fe5541fc9cdc7df3850e3",
+      "blockNumber": 16524939,
+      "status": "Success. A separate 3 MUSD payment verified on chain. Builder confirmed the plan expiry extended; this is not an additional independent customer."
+    }
+  ],
+  "testingScope": "Builder-controlled test wallets. RPC checks establish transaction success and transfers; app activation and recovery are supported by builder testing and the supplied screen recording. Independent user testing is pending. Test tokens only."
 }

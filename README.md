@@ -10,7 +10,7 @@ The `/evidence` and PDF links become live when this update is deployed. Set `NEX
 
 - **Get MUSD at checkout:** a BTC-to-MUSD swap through the official Mezo Testnet basic pool. Verifies the chain, router, factory, pool identity, reserves and quote before signing. Shows a minimum output and bounded slippage. BTC approval is exact; swap output goes to the buyer. The product purchase remains a separate, explicit payment.
 - **Creator plan:** free publishing up to 3 products; 3 MUSD for 30 days and up to 25 products. No automatic renewal or buyer surcharge. Existing products and downloads survive expiry. Payments go to a configured treasury and activate access once after verified settlement.
-- **Receipt evidence:** public `/evidence`, a committed PDF deck, the original 20 MUSD receipt, and Copy evidence in the Sales dashboard.
+- **Receipt evidence:** public `/evidence`, a committed PDF deck, Wave 1 and Wave 2 receipts, and Copy evidence in the Sales dashboard.
 - **Recovery hardening:** global authorization and transaction-hash claims prevent one payment being used across product and plan orders. Creator plan settlement can be reconciled without another charge.
 
 ## Evidence judges can verify
@@ -28,9 +28,9 @@ The hash and full wallets were recovered from the original demo recording. Wave 
 
 ## Status and limits
 
-Wave 1 product payment and downloads were exercised by the builder and payment was independently traced by judges. The October 31 update implements funding and creator plans; **a real swap, plan payment and independent pilot remain pending**. The Node RPC check verified the router, factory, token pair, pool identity, nonzero reserves and a real quote at block 16485495 (0.0001 test BTC -> 7.860544713003182959 MUSD). See `docs/pool-read-check.json`. No completed swap or Creator plan payment is claimed.
+Wave 1 product payment and downloads were exercised by the builder and payment was independently traced by judges. Wave 2 now has confirmed testnet transactions through PayLink’s configured Mezo Pools router: [0.005 BTC → 392.93150772138529189 MUSD](https://explorer.test.mezo.org/tx/0x9a10cee76f5561bd3c4b50198ca8cbc4af52d7fb9d6f62896c3cbb65e1d3ec56), followed by a [400 MUSD direct seller payment](https://explorer.test.mezo.org/tx/0x00c80a97523507f05cf8ac8f4e6332971f92c2832737cd819b3598f2952ae57b). Both 3 MUSD Creator plan payment receipts are linked on `/evidence`. The builder confirmed activation and extension, and recorded purchase/download/recovery. These are builder-controlled wallets; **independent user testing remains pending**. The earlier read-only pool check in `docs/pool-read-check.json` is retained as historical development evidence.
 
-`docs/evidence.json` records this distinction. `npm run submission:check` intentionally reports missing video/acceptance evidence until the builder fills it with real results. Read [the live acceptance checklist](docs/WAVE2-ACCEPTANCE.md) and [pilot guide](docs/PILOT.md).
+`docs/evidence.json` records this distinction. `npm run submission:check` intentionally reports missing video/acceptance evidence until the remaining video and independent pilot evidence are supplied. Read [the live acceptance checklist](docs/WAVE2-ACCEPTANCE.md) and [pilot guide](docs/PILOT.md).
 
 ## Install
 
